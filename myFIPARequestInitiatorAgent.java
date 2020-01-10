@@ -22,7 +22,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package ombre;
+package examples.ombre;
 
 import jade.core.Agent;
 import jade.core.AID;
