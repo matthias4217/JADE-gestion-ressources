@@ -43,7 +43,7 @@ import jade.domain.FIPAAgentManagement.FailureException;
    failures.
    @author Giovanni Caire - TILAB
  */
-public class FIPARequestResponderAgent extends Agent {
+public class MyFIPARequestResponderAgent extends Agent {
 	
   protected void setup() {
   	System.out.println("Agent "+getLocalName()+" waiting for requests...");
