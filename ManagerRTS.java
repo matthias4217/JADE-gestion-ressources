@@ -65,16 +65,16 @@ public class ManagerRTS extends Agent {
 	
 
 	private class ManagerBehaviour extends Behaviour {
-		
-		private int current_worker=0;
 
+		private int current_worker = 0;
+		
 		public void action() {
                     int nbWorkers = ((ManagerRTS) myAgent).nWorkers;
                     Object[] args =  ((ManagerRTS) myAgent).args;
                     if (nbWorkers > 0 && idleWorker) {
 				ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
 				msg.setContent(PRODUCE);
-				for(int current_worker=0;current_worker< nbWorkers * producingRatio;current_worker++)
+				for(current_worker = 0 ; current_worker < nbWorkers*producingRatio ; current_worker++)
 				{
 					msg.addReceiver(new AID((String) args[current_worker], AID.ISLOCALNAME));
 				}
@@ -82,7 +82,7 @@ public class ManagerRTS extends Agent {
 
 				msg = new ACLMessage(ACLMessage.REQUEST);
 				msg.setContent(HARVEST);
-				for(int current_worker=0;current_worker<nbWorkers ;current_worker++)
+				for( ; current_worker < nbWorkers ; current_worker++)
 				{
 					msg.addReceiver(new AID((String) args[current_worker], AID.ISLOCALNAME));
 				}
