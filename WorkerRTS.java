@@ -130,11 +130,9 @@ public class WorkerRTS extends Agent {
 		switch (task) {
 			case 1 :
 				taskDone.setContent(ManagerRTS.HARVEST);
-				System.out.println("Harvest done");
 				break;
 			case 2 :
 				taskDone.setContent(ManagerRTS.PRODUCE);
-				System.out.println("Produce done");
 				break;
 		}
 		send(taskDone);

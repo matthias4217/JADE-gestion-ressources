@@ -44,10 +44,17 @@ import java.util.Vector;
  */
 public class ManagerRTS extends Agent {
 	
-        public static int nbRessources=1;
         /** Resources owned by the manager */	
         public int resources = {0, 0};
 
+	// the current resource stock
+	private int nbResource = 0;
+	// the current product stock
+	private int nbProduct = 0;
+	// the product goal
+	private int goalProduct = 3;
+	private boolean idleWorker = true;
+	
 	public static float producingRatio=0.5f;//Could change to a dynamic value
 
 	public static final String PAUSE = "Pause";	
@@ -67,27 +74,44 @@ public class ManagerRTS extends Agent {
 		public void action() {
                     int nbWorkers = ((ManagerRTS) myAgent).nWorkers;
                     Object[] args =  ((ManagerRTS) myAgent).args;
-                    if (nbWorkers > 0) {
-                        ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
-                        msg.setContent(PRODUCE);
-                        for(int current_worker=0;current_worker< nbWorkers * producingRatio;current_worker++)
-                        {
-                            msg.addReceiver(new AID((String) args[current_worker], AID.ISLOCALNAME));
-                        }
-                        //myAgent.send(msg);
+                    if (nbWorkers > 0 && idleWorker) {
+				ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+				msg.setContent(PRODUCE);
+				for(int current_worker=0;current_worker< nbWorkers * producingRatio;current_worker++)
+				{
+					msg.addReceiver(new AID((String) args[current_worker], AID.ISLOCALNAME));
+				}
+				myAgent.send(msg);
 
-                        msg = new ACLMessage(ACLMessage.REQUEST);
-                        msg.setContent(HARVEST);
-                        for(int current_worker=0;current_worker<nbWorkers ;current_worker++)
-                        {
-                            msg.addReceiver(new AID((String) args[current_worker], AID.ISLOCALNAME));
-                        }
-                        //myAgent.send(msg);
+				msg = new ACLMessage(ACLMessage.REQUEST);
+				msg.setContent(HARVEST);
+				for(int current_worker=0;current_worker<nbWorkers ;current_worker++)
+				{
+					msg.addReceiver(new AID((String) args[current_worker], AID.ISLOCALNAME));
+				}
+				myAgent.send(msg);
+				idleWorker = false;
                     }
-                }
+		    // Receive information from Workers
+		    ACLMessage workerInfo = myAgent.receive();
+		    while (workerInfo != null)
+		    {
+			    idleWorker = true;
+			    switch (workerInfo.getContent())
+			    {
+				    case HARVEST:
+					    nbResource++;
+					    break;
+				    case PRODUCE:
+					    nbProduct++;
+					    break;
+			    }
+			    workerInfo = myAgent.receive();
+		    }
+		}
 
 		public final boolean done() {
-			return false;
+			return (nbProduct >= goalProduct);
 		}
 	}
 
