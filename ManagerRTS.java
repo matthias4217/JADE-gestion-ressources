@@ -44,8 +44,10 @@ import java.util.Vector;
  */
 public class ManagerRTS extends Agent {
 	
-	
-	public static int nbRessources=1;
+        public static int nbRessources=1;
+        /** Resources owned by the manager */	
+        public int resources = {0, 0};
+
 	public static float producingRatio=0.5f;//Could change to a dynamic value
 
 	public static final String PAUSE = "Pause";	
