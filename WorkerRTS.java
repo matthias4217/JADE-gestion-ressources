@@ -51,16 +51,14 @@ public class WorkerRTS extends Agent {
 
 	private AID managerAID;
 
-	/*
-	 * The assigned task of the Worker :
-	 * 	0 -> nothing
-	 * 	1 -> harvesting
-	 * 	2 -> producing (using resources to produce crafts)
-	 * 	3 -> stopping
-	 */
-	public int assigned_task = 0;
-
 	private class WorkBehaviour extends Behaviour {
+		/*
+		 * The assigned task of the Worker :
+		 * 	0 -> nothing
+		 * 	1 -> harvesting
+		 * 	2 -> producing (using resources to produce crafts)
+		 * 	3 -> stopping
+		 */
 		private int current_task = 0;
 		private int time_left = 0;
 
@@ -71,7 +69,7 @@ public class WorkerRTS extends Agent {
 				if (time_left <= 0)
 				{
 					((WorkerRTS) myAgent).notifyTaskDone(current_task);
-					current_task = 0; // artificially idle in order to trigger next test if nothing changed
+					current_task = 0;
 				}
 			}
 			ACLMessage msg = myAgent.receive();
@@ -86,32 +84,24 @@ public class WorkerRTS extends Agent {
 				switch (msg.getContent())
 				{
 					case ManagerRTS.PAUSE:
-						((WorkerRTS) myAgent).assigned_task = 0;
+						current_task = 0;
 						break;
 					case ManagerRTS.HARVEST:
-						((WorkerRTS) myAgent).assigned_task = 1;
+						if (current_task != 1)
+						{
+							current_task = 1;
+							time_left = timeHarvest;
+						}
 						break;
 					case ManagerRTS.PRODUCE:
-						((WorkerRTS) myAgent).assigned_task = 2;
+						if (current_task != 2)
+						{
+							current_task = 2;
+							time_left = timeProduce;
+						}
 						break;
 					case ManagerRTS.FINISH:
-						((WorkerRTS) myAgent).assigned_task = 3;
-						break;
-				}
-			}
-			if (current_task != ((WorkerRTS) myAgent).assigned_task)
-			{
-				current_task = ((WorkerRTS) myAgent).assigned_task;
-				switch (((WorkerRTS) myAgent).assigned_task)
-				{
-					case 0:
-					case 3:
-						break;
-					case 1:
-						time_left = timeHarvest;
-						break;
-					case 2:
-						time_left = timeProduce;
+						current_task = 3;
 						break;
 				}
 			}
@@ -127,6 +117,7 @@ public class WorkerRTS extends Agent {
 
 		ACLMessage managerGreet = blockingReceive();
 		managerAID = managerGreet.getSender();
+		System.out.println("Agent "+getLocalName()+" received "+managerGreet.getContent());
 
 		System.out.println("Agent "+getLocalName()+" ready to do stuff");
 
@@ -139,9 +130,11 @@ public class WorkerRTS extends Agent {
 		switch (task) {
 			case 1 :
 				taskDone.setContent(ManagerRTS.HARVEST);
+				System.out.println("Harvest done");
 				break;
 			case 2 :
 				taskDone.setContent(ManagerRTS.PRODUCE);
+				System.out.println("Produce done");
 				break;
 		}
 		send(taskDone);
