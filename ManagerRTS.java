@@ -32,12 +32,14 @@ import jade.proto.AchieveREInitiator;
 import jade.domain.FIPANames;
 
 import java.util.Date;
+import java.lang.System;
 import java.util.Vector;
 
 /**
  */
 public class ManagerRTS extends Agent {
 	
+    public long startupTime = System.currentTimeMillis();
         /** @Unused Resources owned by the manager */	
         public int[] resources = {0, 0};
 
@@ -104,6 +106,9 @@ public class ManagerRTS extends Agent {
 		}
 
                 public int onEnd() {
+                    long executionTime = System.currentTimeMillis()
+                        - ((ManagerRTS) myAgent).startupTime;
+                    System.out.println("Total duration: "+executionTime);
                     ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
                     msg.setContent(FINISH);
                     for(int current_worker=0;current_worker< nWorkers;current_worker++)
