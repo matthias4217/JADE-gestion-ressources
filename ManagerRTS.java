@@ -48,10 +48,10 @@ public class ManagerRTS extends Agent {
 	public static int nbRessources=1;
 	public static float producingRatio=0.5f;//Could change to a dynamic value
 
-	public static String PAUSE = "Pause";	
-	public static String HARVEST = "Harvest";
-	public static String PRODUCE = "Produce";
-	public static String FINISH = "Finish";
+	public static final String PAUSE = "Pause";	
+	public static final String HARVEST = "Harvest";
+	public static final String PRODUCE = "Produce";
+	public static final String FINISH = "Finish";
 
 	public int nWorkers=0;
 	public Object[] args;

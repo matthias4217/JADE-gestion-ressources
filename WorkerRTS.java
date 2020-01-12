@@ -63,13 +63,38 @@ public class WorkerRTS extends Agent {
 		private int time_left = 0;
 
 		public void action() {
-			if (current_task == 2 || current_task == 3)
+			if (current_task == 1 || current_task == 2)
 			{
 				time_left --;
 				if (time_left <= 0)
 				{
 					((WorkerRTS) myAgent).notifyTaskDone(current_task);
 					current_task = 0; // artificially idle in order to trigger next test if nothing changed
+				}
+			}
+			ACLMessage msg = myAgent.receive();
+			if (msg != null)
+			{
+				// empty message queue
+				ACLMessage latest_msg = myAgent.receive();
+				while (latest_msg != null) {
+					msg = latest_msg;
+				}
+				// msg is the latest message sent by the Manager
+				switch (msg.getContent())
+				{
+					case ManagerRTS.PAUSE:
+						((WorkerRTS) myAgent).assigned_task = 0;
+						break;
+					case ManagerRTS.HARVEST:
+						((WorkerRTS) myAgent).assigned_task = 1;
+						break;
+					case ManagerRTS.PRODUCE:
+						((WorkerRTS) myAgent).assigned_task = 2;
+						break;
+					case ManagerRTS.FINISH:
+						((WorkerRTS) myAgent).assigned_task = 3;
+						break;
 				}
 			}
 			if (current_task != ((WorkerRTS) myAgent).assigned_task)
@@ -105,7 +130,16 @@ public class WorkerRTS extends Agent {
 	}
 
 	public void notifyTaskDone(int task) {
-		// TODO : notify Manager task has been completed
+		ACLMessage taskDone = new ACLMessage(ACLMessage.INFORM);
+		switch (task) {
+			case 1 :
+				taskDone.setContent(ManagerRTS.HARVEST);
+				break;
+			case 2 :
+				taskDone.setContent(ManagerRTS.PRODUCE);
+				break;
+		}
+		send(taskDone);
 	}
 }
 
