@@ -35,14 +35,10 @@ import java.util.Date;
 import java.util.Vector;
 
 /**
-   This example shows how to implement the initiator role in 
-   a FIPA-request interaction protocol. In this case in particular 
-   we use an <code>AchieveREInitiator</code> ("Achieve Rational effect") 
-   to request a dummy action to a number of agents (whose local
-   names must be specified as arguments).
-   @author Giovanni Caire - TILAB
  */
 public class ManagerRTS extends Agent {
+	
+	public static int productCost = 3;
 	
 	// the current resource stock
 	private int nbResource = 0;
@@ -50,10 +46,8 @@ public class ManagerRTS extends Agent {
 	private int nbProduct = 0;
 	// the product goal
 	private int goalProduct = 3;
-	private boolean idleWorker = true;
+	private boolean hasStarted = false;
 	
-	public static float producingRatio=0.5f;//Could change to a dynamic value
-
 	public static final String PAUSE = "Pause";	
 	public static final String HARVEST = "Harvest";
 	public static final String PRODUCE = "Produce";
@@ -71,29 +65,20 @@ public class ManagerRTS extends Agent {
 		public void action() {
                     int nbWorkers = ((ManagerRTS) myAgent).nWorkers;
                     Object[] args =  ((ManagerRTS) myAgent).args;
-                    if (nbWorkers > 0 && idleWorker) {
+                    if (nbWorkers > 0 && !hasStarted) {
 				ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
-				msg.setContent(PRODUCE);
-				for(current_worker = 0 ; current_worker < nbWorkers*producingRatio ; current_worker++)
-				{
-					msg.addReceiver(new AID((String) args[current_worker], AID.ISLOCALNAME));
-				}
-				myAgent.send(msg);
-
-				msg = new ACLMessage(ACLMessage.REQUEST);
 				msg.setContent(HARVEST);
-				for( ; current_worker < nbWorkers ; current_worker++)
+				for(current_worker = 0 ; current_worker < nbWorkers ; current_worker++)
 				{
 					msg.addReceiver(new AID((String) args[current_worker], AID.ISLOCALNAME));
 				}
 				myAgent.send(msg);
-				idleWorker = false;
+				hasStarted = true;
                     }
 		    // Receive information from Workers
 		    ACLMessage workerInfo = myAgent.receive();
 		    while (workerInfo != null)
 		    {
-			    idleWorker = true;
 			    switch (workerInfo.getContent())
 			    {
 				    case HARVEST:
@@ -103,6 +88,10 @@ public class ManagerRTS extends Agent {
 					    nbProduct++;
 					    break;
 			    }
+			    ACLMessage reply = workerInfo.createReply();
+			    reply.setContent(determineOrder());
+			    myAgent.send(reply);
+
 			    workerInfo = myAgent.receive();
 		    }
 		}
@@ -110,6 +99,20 @@ public class ManagerRTS extends Agent {
 		public final boolean done() {
 			return (nbProduct >= goalProduct);
 		}
+	}
+
+	private String determineOrder() {
+		return produceIfYouCan();
+	}
+	
+	private String produceIfYouCan() {
+		// if has enough to produce, produce
+		if (nbResource >= productCost)
+		{
+			nbResource -= productCost;
+			return PRODUCE;
+		}
+		return HARVEST;
 	}
 
 	protected void setup() {
