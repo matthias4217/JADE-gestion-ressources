@@ -115,6 +115,15 @@ public class ManagerRTS extends Agent {
 		return HARVEST;
 	}
 
+	private String harvestingRatio() {
+		float ratio = 0.7f;
+		if (Math.random() < ratio)
+		{
+			return HARVEST;
+		}
+		return PRODUCE;
+	}
+
 	protected void setup() {
 
             args = getArguments();
