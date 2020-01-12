@@ -49,6 +49,8 @@ public class WorkerRTS extends Agent {
 	public static int timeHarvest = 3;
 	public static int timeProduce = 5;
 
+	private AID managerAID;
+
 	/*
 	 * The assigned task of the Worker :
 	 * 	0 -> nothing
@@ -121,16 +123,19 @@ public class WorkerRTS extends Agent {
 	}
 
 	protected void setup() {
-		System.out.println("Agent "+getLocalName()+" waiting for requests...");
-		MessageTemplate template = MessageTemplate.and(
-			MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST),
-			MessageTemplate.MatchPerformative(ACLMessage.REQUEST) );
+		System.out.println("Agent "+getLocalName()+" waiting for Manager...");
+
+		ACLMessage managerGreet = blockingReceive();
+		managerAID = managerGreet.getSender();
+
+		System.out.println("Agent "+getLocalName()+" ready to do stuff");
 
 		addBehaviour(new WorkBehaviour());
 	}
 
 	public void notifyTaskDone(int task) {
 		ACLMessage taskDone = new ACLMessage(ACLMessage.INFORM);
+		taskDone.addReceiver(managerAID);
 		switch (task) {
 			case 1 :
 				taskDone.setContent(ManagerRTS.HARVEST);
