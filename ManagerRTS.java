@@ -43,6 +43,9 @@ public class ManagerRTS extends Agent {
         /** @Unused Resources owned by the manager */	
         public int[] resources = {0, 0};
 
+
+	public static int strategie=0; //0: produce when possible; 1: dynamic probability of harvest
+
 	public static int productCost = 3;
 	
 	// the current resource stock
@@ -121,7 +124,14 @@ public class ManagerRTS extends Agent {
 	}
 
 	private String determineOrder() {
-		return produceIfYouCan();
+		if(strategie==0)
+		{
+			return produceIfYouCan();
+		}
+		else
+		{
+			return harvestingRatio();
+		}
 	}
 	
 	private String produceIfYouCan() {
@@ -135,12 +145,18 @@ public class ManagerRTS extends Agent {
 	}
 
 	private String harvestingRatio() {
-		float ratio = 0.7f;
+		float ratio =  ((float)nbProduct / ((float)goalProduct+1)  );
 		if (Math.random() < ratio)
 		{
 			return HARVEST;
 		}
-		return PRODUCE;
+
+		if (nbResource >= productCost)
+		{
+			nbResource -= productCost;
+			return PRODUCE;
+		}
+		return HARVEST;
 	}
 
 	protected void setup() {
