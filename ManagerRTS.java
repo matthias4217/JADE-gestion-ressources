@@ -52,6 +52,7 @@ public class ManagerRTS extends Agent {
 	public static final String HARVEST = "Harvest";
 	public static final String PRODUCE = "Produce";
 	public static final String FINISH = "Finish";
+	public static final String HELLO = "Hello";
 
 	public int nWorkers=0;
 	public Object[] args;
@@ -95,6 +96,14 @@ public class ManagerRTS extends Agent {
 		if (args != null) {	
 			nWorkers = args.length;
 		}
+
+                ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+                msg.setContent(HELLO);
+                for(current_worker=0;current_worker< nbWorkers;current_worker++)
+                {
+                    msg.addReceiver(new AID((String) args[current_worker], AID.ISLOCALNAME));
+                }
+                myAgent.send(msg);
 
 
 		System.out.println("Agent "+getLocalName()+" prepares to send requests...");
