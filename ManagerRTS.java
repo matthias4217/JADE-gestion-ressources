@@ -61,16 +61,16 @@ public class ManagerRTS extends Agent {
 	private class ManagerBehaviour extends Behaviour {
 		
 		
-		private int nbWorkers = ((ManagerRTS) myAgent).nWorkers;
+                //System.out.println("Manager "+getLocalName()+": Adding behaviour...");
 		private int current_worker=0;
 
-		Object[] args =  ((ManagerRTS) myAgent).args;
-
 		public void action() {
-			if (nbWorkers > 0) {
+                    int nbWorkers = ((ManagerRTS) myAgent).nWorkers;
+                    Object[] args =  ((ManagerRTS) myAgent).args;
+                    if (nbWorkers > 0) {
 				ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
 				msg.setContent(PRODUCE);
-				for(current_worker=0;current_worker< nbWorkers * producingRatio;current_worker++)
+				for(int current_worker=0;current_worker< nbWorkers * producingRatio;current_worker++)
 				{
 					msg.addReceiver(new AID((String) args[current_worker], AID.ISLOCALNAME));
 				}
@@ -78,12 +78,12 @@ public class ManagerRTS extends Agent {
 
 				msg = new ACLMessage(ACLMessage.REQUEST);
 				msg.setContent(HARVEST);
-				for(current_worker=0;current_worker<nbWorkers ;current_worker++)
+				for(int current_worker=0;current_worker<nbWorkers ;current_worker++)
 				{
 					msg.addReceiver(new AID((String) args[current_worker], AID.ISLOCALNAME));
 				}
 				myAgent.send(msg);
-			}
+                    }
 		}
 		public final boolean done() {
 			return false;
@@ -99,14 +99,14 @@ public class ManagerRTS extends Agent {
 
                 ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
                 msg.setContent(HELLO);
-                for(current_worker=0;current_worker< nbWorkers;current_worker++)
+                for(int current_worker=0;current_worker< nWorkers;current_worker++)
                 {
                     msg.addReceiver(new AID((String) args[current_worker], AID.ISLOCALNAME));
                 }
-                myAgent.send(msg);
+                this.send(msg);
 
 
-		System.out.println("Agent "+getLocalName()+" prepares to send requests...");
+		System.out.println("Manager "+getLocalName()+" prepares to send requests...");
 		/*MessageTemplate template = MessageTemplate.and(
 			MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST),
 			MessageTemplate.MatchPerformative(ACLMessage.REQUEST) );*/
