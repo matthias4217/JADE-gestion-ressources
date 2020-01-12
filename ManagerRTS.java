@@ -66,8 +66,6 @@ public class ManagerRTS extends Agent {
 
 	private class ManagerBehaviour extends Behaviour {
 		
-		
-                //System.out.println("Manager "+getLocalName()+": Adding behaviour...");
 		private int current_worker=0;
 
 		public void action() {
@@ -116,26 +114,26 @@ public class ManagerRTS extends Agent {
 
 	protected void setup() {
 
-		args = getArguments();
-		if (args != null) {	
-			nWorkers = args.length;
-		}
+            args = getArguments();
+            if (args != null) {	
+                nWorkers = args.length;
+            }
 
-                ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
-                msg.setContent(HELLO);
-                for(int current_worker=0;current_worker< nWorkers;current_worker++)
-                {
-                    msg.addReceiver(new AID((String) args[current_worker], AID.ISLOCALNAME));
-                }
-                this.send(msg);
+            ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+            msg.setContent(HELLO);
+            for(int current_worker=0;current_worker< nWorkers;current_worker++)
+            {
+                msg.addReceiver(new AID((String) args[current_worker], AID.ISLOCALNAME));
+            }
+            this.send(msg);
 
 
-		System.out.println("Manager "+getLocalName()+" prepares to send requests...");
+            System.out.println("Manager "+getLocalName()+" prepares to send requests...");
 		/*MessageTemplate template = MessageTemplate.and(
 			MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST),
 			MessageTemplate.MatchPerformative(ACLMessage.REQUEST) );*/
 
-		addBehaviour(new ManagerBehaviour());
+            addBehaviour(new ManagerBehaviour());
 	}
 	
 /*
