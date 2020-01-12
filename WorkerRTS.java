@@ -55,7 +55,7 @@ public class WorkerRTS extends Agent {
 	 * The assigned task of the Worker :
 	 * 	0 -> nothing
 	 * 	1 -> harvesting
-	 * 	2 -> producing
+	 * 	2 -> producing (using resources to produce crafts)
 	 * 	3 -> stopping
 	 */
 	public int assigned_task = 0;
