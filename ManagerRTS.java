@@ -38,6 +38,9 @@ import java.util.Vector;
  */
 public class ManagerRTS extends Agent {
 	
+        /** @Unused Resources owned by the manager */	
+        public int[] resources = {0, 0};
+
 	public static int productCost = 3;
 	
 	// the current resource stock
@@ -97,8 +100,19 @@ public class ManagerRTS extends Agent {
 		}
 
 		public final boolean done() {
-			return (nbProduct >= goalProduct);
+                    return (nbProduct >= goalProduct);
 		}
+
+                public int onEnd() {
+                    ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+                    msg.setContent(FINISH);
+                    for(int current_worker=0;current_worker< nWorkers;current_worker++)
+                    {
+                        msg.addReceiver(new AID((String) args[current_worker], AID.ISLOCALNAME));
+                    }
+                    myAgent.send(msg);
+                    return 1;
+                }
 	}
 
 	private String determineOrder() {
