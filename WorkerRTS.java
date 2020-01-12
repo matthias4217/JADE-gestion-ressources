@@ -79,6 +79,7 @@ public class WorkerRTS extends Agent {
 				ACLMessage latest_msg = myAgent.receive();
 				while (latest_msg != null) {
 					msg = latest_msg;
+					latest_msg = myAgent.receive();
 				}
 				// msg is the latest message sent by the Manager
 				switch (msg.getContent())
