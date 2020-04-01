@@ -2,6 +2,8 @@
 
 A small school project modeling resource management.
 
+![Agents sending messages](https://github.com/matthias4217/JADE-gestion-ressources/blob/master/jade_icon.png)
+
 ## Objectives
 
 Using Jade, create a simulation of a manager organising some workers to collect resources and produce items.
