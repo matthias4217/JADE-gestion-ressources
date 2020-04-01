@@ -6,7 +6,7 @@ A small school project modeling resource management.
 
 ## Objectives
 
-Using Jade, create a simulation of a manager organising some workers to collect resources and produce items.
+Using [Jade](https://jade.tilab.com/), create a simulation of a manager organising some workers to collect resources and produce items.
 Workers have to be able to harvest a resource, and produce using resources.
 The Manager has to know the amount of available resources and products, and to ask Workers either to produce or to harvest in order to fulfill a production objective.
 Then, we would run a few simulations to compare different strategies with different objectives and a different number of Workers.
